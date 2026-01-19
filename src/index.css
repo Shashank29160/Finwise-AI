@@ -1,0 +1,295 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  :root {
+    /* Finance-focused color palette - Deep Navy & Emerald */
+    --background: 220 20% 97%;
+    --foreground: 220 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 15%;
+
+    /* Deep navy primary */
+    --primary: 220 60% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft blue-gray secondary */
+    --secondary: 215 25% 92%;
+    --secondary-foreground: 220 30% 25%;
+
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Emerald accent for positive/income */
+    --accent: 160 65% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Coral for expenses/negative */
+    --destructive: 15 85% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success green */
+    --success: 150 60% 40%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning amber */
+    --warning: 40 90% 50%;
+    --warning-foreground: 220 30% 15%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 220 60% 40%;
+
+    --radius: 0.75rem;
+
+    /* Custom finance tokens */
+    --income: 150 60% 40%;
+    --expense: 15 85% 55%;
+    --balance-positive: 160 65% 45%;
+    --balance-negative: 0 70% 50%;
+    
+    /* AI Chat specific */
+    --ai-gradient-start: 220 60% 25%;
+    --ai-gradient-end: 240 50% 35%;
+    --ai-bubble: 220 40% 96%;
+    --user-bubble: 220 60% 25%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 25% 8%;
+    --foreground: 220 15% 95%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 220 15% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 15% 95%;
+
+    --primary: 215 80% 60%;
+    --primary-foreground: 220 25% 8%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 220 15% 90%;
+
+    --muted: 220 20% 16%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 160 60% 50%;
+    --accent-foreground: 220 25% 8%;
+
+    --destructive: 15 80% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 150 55% 50%;
+    --success-foreground: 220 25% 8%;
+
+    --warning: 40 85% 55%;
+    --warning-foreground: 220 25% 8%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 215 80% 60%;
+
+    --income: 150 55% 50%;
+    --expense: 15 80% 55%;
+    --balance-positive: 160 60% 50%;
+    --balance-negative: 0 65% 55%;
+
+    --ai-gradient-start: 215 80% 50%;
+    --ai-gradient-end: 260 70% 55%;
+    --ai-bubble: 220 25% 16%;
+    --user-bubble: 215 80% 50%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Finance-specific utility classes */
+  .text-income {
+    @apply text-[hsl(var(--income))];
+  }
+
+  .text-expense {
+    @apply text-[hsl(var(--expense))];
+  }
+
+  .bg-income {
+    @apply bg-[hsl(var(--income))];
+  }
+
+  .bg-expense {
+    @apply bg-[hsl(var(--expense))];
+  }
+
+  /* Card hover effects */
+  .finance-card {
+    @apply bg-card rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md;
+  }
+
+  /* Balance card gradient borders */
+  .balance-card-hdfc {
+    @apply relative overflow-hidden;
+  }
+
+  .balance-card-hdfc::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-blue-600;
+  }
+
+  .balance-card-postal {
+    @apply relative overflow-hidden;
+  }
+
+  .balance-card-postal::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 to-emerald-600;
+  }
+
+  .balance-card-split {
+    @apply relative overflow-hidden;
+  }
+
+  .balance-card-split::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-500 to-orange-500;
+  }
+
+  /* AI Chat bubble styles */
+  .chat-bubble-ai {
+    @apply bg-[hsl(var(--ai-bubble))] rounded-2xl rounded-tl-sm px-4 py-3;
+  }
+
+  .chat-bubble-user {
+    @apply bg-[hsl(var(--user-bubble))] text-white rounded-2xl rounded-tr-sm px-4 py-3;
+  }
+
+  /* Typing indicator animation */
+  .typing-dot {
+    @apply w-2 h-2 rounded-full bg-muted-foreground/50;
+    animation: typing 1.4s infinite ease-in-out;
+  }
+
+  .typing-dot:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typing {
+    0%, 60%, 100% {
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+    30% {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
+  }
+
+  /* Smooth fade-in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Pulse glow for AI */
+  .ai-glow {
+    @apply relative;
+  }
+
+  .ai-glow::before {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-gradient-to-r from-[hsl(var(--ai-gradient-start))] to-[hsl(var(--ai-gradient-end))] opacity-20 blur-xl;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.3;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Monospace for numbers */
+  .font-mono-nums {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/30;
+}
