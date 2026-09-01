@@ -34,9 +34,9 @@ serve(async (req) => {
   try {
     const { message, financialData } = await req.json() as { 
       message: string; 
-      financialData: FinancialData 
+      financialData: FinancialData; 
     };
-    
+     
     const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
     if (!OPENROUTER_API_KEY) {
       console.error("OPENROUTER_API_KEY is not configured");
@@ -46,24 +46,35 @@ serve(async (req) => {
       );
     }
 
-    // Build context from financial data
+    // Build context from financial data safely with fallbacks
+    const totalBalance = financialData?.totalBalance ?? 0;
+    const hdfcBalance = financialData?.hdfcBalance ?? 0;
+    const postalBalance = financialData?.postalBalance ?? 0;
+    const totalIncome = financialData?.totalIncome ?? 0;
+    const totalExpenses = financialData?.totalExpenses ?? 0;
+    const splitsPending = financialData?.splitsPending ?? 0;
+    const splitsSettled = financialData?.splitsSettled ?? 0;
+    const transactionCount = financialData?.transactionCount ?? 0;
+    const categoryBreakdown = financialData?.categoryBreakdown ?? [];
+    const recentTransactions = financialData?.recentTransactions ?? [];
+
     const financialContext = `
 ## Current Financial Summary:
-- **Total Balance**: ₹${financialData.totalBalance.toFixed(2)}
-  - HDFC Bank: ₹${financialData.hdfcBalance.toFixed(2)}
-  - Postal Bank: ₹${financialData.postalBalance.toFixed(2)}
-- **Total Income**: ₹${financialData.totalIncome.toFixed(2)}
-- **Total Expenses**: ₹${financialData.totalExpenses.toFixed(2)}
-- **Split Expenses**: Pending ₹${financialData.splitsPending.toFixed(2)}, Settled ₹${financialData.splitsSettled.toFixed(2)}
-- **Total Transactions**: ${financialData.transactionCount}
+- **Total Balance**: ₹${totalBalance.toFixed(2)}
+  - HDFC Bank: ₹${hdfcBalance.toFixed(2)}
+  - Postal Bank: ₹${postalBalance.toFixed(2)}
+- **Total Income**: ₹${totalIncome.toFixed(2)}
+- **Total Expenses**: ₹${totalExpenses.toFixed(2)}
+- **Split Expenses**: Pending ₹${splitsPending.toFixed(2)}, Settled ₹${splitsSettled.toFixed(2)}
+- **Total Transactions**: ${transactionCount}
 
 ## Spending by Category (sorted by highest):
-${financialData.categoryBreakdown.map(c => 
+${categoryBreakdown.map(c => 
   `- ${c.category}: ₹${c.amount.toFixed(2)} (${c.percentage.toFixed(1)}%)`
 ).join('\n') || 'No expenses recorded yet.'}
 
 ## Recent Transactions:
-${financialData.recentTransactions.slice(0, 10).map(t => 
+${recentTransactions.slice(0, 10).map(t => 
   `- ${t.type === 'expense' ? '📉' : '📈'} ${t.description} (${t.category}): ₹${t.amount.toFixed(2)} via ${t.account} on ${new Date(t.date).toLocaleDateString('en-IN')}`
 ).join('\n') || 'No recent transactions.'}
 `;
@@ -89,7 +100,7 @@ Guidelines:
 Current user financial data:
 ${financialContext}`;
 
-    console.log("Calling OpenRouter API with model xiaomi/mimo-v2-flash:free");
+    console.log("Calling OpenRouter API...");
     
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -100,7 +111,7 @@ ${financialContext}`;
         "X-Title": "Financial Tracker AI",
       },
       body: JSON.stringify({
-        model: "xiaomi/mimo-v2-flash:free",
+        model: "deepseek/deepseek-chat", // Switched to a highly stable, widely supported model
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: message },
@@ -112,16 +123,16 @@ ${financialContext}`;
     if (!response.ok) {
       const errorText = await response.text();
       console.error("OpenRouter API error:", response.status, errorText);
-      
+       
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      
+       
       return new Response(
-        JSON.stringify({ error: "AI service temporarily unavailable" }),
+        JSON.stringify({ error: `AI service error: ${errorText}` }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
